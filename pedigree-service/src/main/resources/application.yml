@@ -1,0 +1,82 @@
+server:
+  port: 8082
+
+spring:
+  cloud:
+    loadbalancer:
+      enabled: true
+    discovery:
+      client:
+        simple:
+          instances:
+            cat-service:
+              - uri: http://cat-service:8081
+            owner-service:
+              - uri: http://owner-service:8080
+  application:
+    name: pedigree-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catclub
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    parameters:
+      ignoreDuplicateTables: true
+      ignoreChecksums: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.catclub: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://postgres:5432/catclub
+    username: postgres
+    password: postgres
+  feign:
+    client:
+      config:
+        cat-service:
+          url: http://cat-service:8081
+        owner-service:
+          url: http://owner-service:8080

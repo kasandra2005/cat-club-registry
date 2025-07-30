@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: dev
+      runOnChange: true
+      failOnError: false
+      changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: owners
+        - createTable:
+            tableName: owners
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: phone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: registration_date
+                  type: date
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: idx_owners_email
+            tableName: owners
+            columns:
+              - column:
+                  name: email
+                  type: varchar(100)
+
+        - createIndex:
+            indexName: idx_owners_phone
+            tableName: owners
+            columns:
+              - column:
+                  name: phone
+                  type: varchar(20)

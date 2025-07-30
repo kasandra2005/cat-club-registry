@@ -1,0 +1,9 @@
+databaseChangeLog:
+#  - preConditions:
+#      - onFail: MARK_RAN
+#      - not:
+#          - tableExists:
+#              tableName: cats
+  - include:
+      file: classpath:db/changelog/v1.0/init-schema.yaml
+      relativeToChangelogFile: false
