@@ -1,6 +1,7 @@
 package org.catclub.owner.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "owners")
-@Getter @Setter @NoArgsConstructor
+@Data
 public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: owner-service
+          uri: http://owner-service:8081
+          predicates:
+            - Path=/api/owners/**
+          filters:
+            - StripPrefix=1
+
+        - id: cat-service
+          uri: http://cat-service:8082
+          predicates:
+            - Path=/api/cats/**
+          filters:
+            - StripPrefix=1
+
+        - id: pedigree-service
+          uri: http://pedigree-service:8083
+          predicates:
+            - Path=/api/pedigrees/**
+          filters:
+            - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   cloud:
@@ -10,13 +10,13 @@ spring:
         simple:
           instances:
             cat-service:
-              - uri: http://cat-service:8081
+              - uri: http://cat-service:8082
             owner-service:
-              - uri: http://owner-service:8080
+              - uri: http://owner-service:8081
   application:
     name: pedigree-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/catclub
+  ddatasource:
+    url: jdbc:postgresql://postgres:5432/catclub
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -77,6 +77,6 @@ spring:
     client:
       config:
         cat-service:
-          url: http://cat-service:8081
+          url: http://cat-service:8082
         owner-service:
-          url: http://owner-service:8080
+          url: http://owner-service:8081
