@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
         name = "owner-service",
-        url = "http://owner-service:8081" // Прямое указание URL
+        url = "http://owner-service:8080" // Прямое указание URL
 )
 public interface OwnerServiceClient {
     @GetMapping("/api/owners/{id}")
