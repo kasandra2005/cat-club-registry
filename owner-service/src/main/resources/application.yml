@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
   config:
@@ -26,29 +26,18 @@ spring:
     parameters:
       ignoreDuplicateTables: true
       ignoreChecksums: true
-
-management:
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-      base-path: /actuator
-  health:
-    db:
-      enabled: true
-    diskspace:
-      enabled: true
+  spring:
+    security:
+      user:
+        name: user
+        password: password
+      filter:
+        dispatcher-types: async, request
 
 logging:
   level:
-    root: INFO
-    org.hibernate.SQL: DEBUG
-    com.catclub: DEBUG
+    org.springframework.boot.actuate: DEBUG
+    org.springframework.web: DEBUG
 
 ---
 spring:
@@ -60,5 +49,12 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
 
-  server:
-    port: 8081
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+      base-path: /actuator
+    endpoint:
+      health:
+        show-details: always

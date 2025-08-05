@@ -11,34 +11,33 @@ spring:
           enabled: false
       routes:
         - id: owner-service
-          uri: http://owner-service:8081
+          uri: http://owner-service:8080  # Внутри сети Docker обращаемся на 8080
           predicates:
             - Path=/api/owners/**
-          filters:
-            - StripPrefix=1
 
         - id: cat-service
-          uri: http://cat-service:8082
+          uri: http://cat-service:8080
           predicates:
             - Path=/api/cats/**
-          filters:
-            - StripPrefix=1
 
         - id: pedigree-service
-          uri: http://pedigree-service:8083
+          uri: http://pedigree-service:8080
           predicates:
             - Path=/api/pedigrees/**
-          filters:
-            - StripPrefix=1
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus
+      base-path: /actuator
   endpoint:
     health:
       show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
 
 logging:
   level:
