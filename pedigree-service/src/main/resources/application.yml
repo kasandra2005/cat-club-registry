@@ -10,9 +10,9 @@ spring:
         simple:
           instances:
             cat-service:
-              - uri: http://cat-service:8082
+              - uri: http://cat-service:8080
             owner-service:
-              - uri: http://owner-service:8081
+              - uri: http://owner-service:8080
   application:
     name: pedigree-service
   datasource:
@@ -29,20 +29,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
     parameters:
       ignoreDuplicateTables: true
       ignoreChecksums: true
-  spring:
-    security:
-      user:
-        name: user
-        password: password
-      filter:
-        dispatcher-types: async, request
+      ignoreFailedPreconditions: true
+  security:
+    user:
+      name: user
+      password: password
+    filter:
+      dispatcher-types: async, request
 
+# Feign клиенты
 feign:
   client:
     config:
@@ -50,13 +52,37 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
+      cat-service:
+        url: http://cat-service:8080
+      owner-service:
+        url: http://owner-service:8080
+
+# Настройки Swagger
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    doc-expansion: none
+    display-request-duration: true
+    try-it-out-enabled: true
+  api-docs:
+    path: /v3/api-docs
+    groups:
+      enabled: true
+  packages-to-scan: org.catclub.pedigree.controller
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
 
 logging:
   level:
     org.springframework.boot.actuate: DEBUG
     org.springframework.web: DEBUG
+    org.springdoc: INFO
+    feign: DEBUG
 
 ---
+# Конфигурация для Docker
 spring:
   config:
     activate:
@@ -69,9 +95,9 @@ spring:
     client:
       config:
         cat-service:
-          url: http://cat-service:8082
+          url: http://cat-service:8080
         owner-service:
-          url: http://owner-service:8081
+          url: http://owner-service:8080
   management:
     endpoints:
       web:
@@ -81,3 +107,20 @@ spring:
     endpoint:
       health:
         show-details: always
+
+# Настройки Swagger для Docker
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    url: /v3/api-docs
+    config-url: /v3/api-docs/swagger-config
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: pedigree-service
+      paths-to-match: /api/pedigrees/**
+      packages-to-scan: org.catclub.pedigree.controller
+  default-produces-media-type: application/json

@@ -10,8 +10,9 @@ spring:
         locator:
           enabled: false
       routes:
+        # Основные сервисы
         - id: owner-service
-          uri: http://owner-service:8080  # Внутри сети Docker обращаемся на 8080
+          uri: http://owner-service:8080
           predicates:
             - Path=/api/owners/**
 
@@ -24,6 +25,42 @@ spring:
           uri: http://pedigree-service:8080
           predicates:
             - Path=/api/pedigrees/**
+
+        # Swagger UI (перенаправляем на owner-service)
+        - id: swagger-ui
+          uri: http://owner-service:8080
+          predicates:
+            - Path=/swagger-ui.html
+          filters:
+            - RewritePath=/swagger-ui.html, /swagger-ui/index.html
+
+        # Swagger ресурсы (для корректной работы UI)
+        - id: swagger-resources
+          uri: http://owner-service:8080
+          predicates:
+            - Path=/swagger-resources/**
+
+        # API документация сервисов
+        - id: owner-api-docs
+          uri: http://owner-service:8080
+          predicates:
+            - Path=/owner-api/v3/api-docs
+          filters:
+            - RewritePath=/owner-api/v3/api-docs, /v3/api-docs
+
+        - id: cat-api-docs
+          uri: http://cat-service:8080
+          predicates:
+            - Path=/cat-api/v3/api-docs
+          filters:
+            - RewritePath=/cat-api/v3/api-docs, /v3/api-docs
+
+        - id: pedigree-api-docs
+          uri: http://pedigree-service:8080
+          predicates:
+            - Path=/pedigree-api/v3/api-docs
+          filters:
+            - RewritePath=/pedigree-api/v3/api-docs, /v3/api-docs
 
 management:
   endpoints:
@@ -42,3 +79,4 @@ management:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: TRACE

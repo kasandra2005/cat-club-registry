@@ -26,18 +26,32 @@ spring:
     parameters:
       ignoreDuplicateTables: true
       ignoreChecksums: true
-  spring:
-    security:
-      user:
-        name: user
-        password: password
-      filter:
-        dispatcher-types: async, request
+  security:
+    user:
+      name: user
+      password: password
+    filter:
+      dispatcher-types: async, request
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    doc-expansion: none
+  api-docs:
+    path: /v3/api-docs
+    groups:
+      enabled: true
+  packages-to-scan: org.catclub.owner.controller
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
 
 logging:
   level:
     org.springframework.boot.actuate: DEBUG
     org.springframework.web: DEBUG
+    org.springdoc: INFO
 
 ---
 spring:
@@ -58,3 +72,16 @@ spring:
     endpoint:
       health:
         show-details: always
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: owner-service
+      paths-to-match: /api/owners/**
+      packages-to-scan: org.catclub.owner.controller

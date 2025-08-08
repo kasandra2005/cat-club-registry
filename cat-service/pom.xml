@@ -39,6 +39,10 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.25.0</version> <!-- Актуальная версия -->
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
 
         <!-- Общие зависимости -->
         <dependency>
