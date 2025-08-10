@@ -13,12 +13,14 @@ docker-compose ps
 
 ➜  cat-club-registry git:(main) ✗ docker-compose ps
 
-NAME               IMAGE              COMMAND                  SERVICE            CREATED          STATUS                    PORTS
-api-gateway        api-gateway        "java -Dspring.profi…"   api-gateway        28 seconds ago   Up 6 seconds (healthy)    0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
-cat-service        cat-service        "java -jar app.jar"      cat-service        28 seconds ago   Up 17 seconds (healthy)   0.0.0.0:8082->8080/tcp, [::]:8082->8080/tcp
-owner-service      owner-service      "java -jar app.jar"      owner-service      28 seconds ago   Up 22 seconds (healthy)   0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
-pedigree-service   pedigree-service   "java -jar app.jar"      pedigree-service   28 seconds ago   Up 11 seconds (healthy)   0.0.0.0:8083->8080/tcp, [::]:8083->8080/tcp
-postgres           postgres:15        "docker-entrypoint.s…"   postgres           28 seconds ago   Up 28 seconds (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+NAME               IMAGE                    COMMAND                  SERVICE            CREATED         STATUS                     PORTS
+api-gateway        api-gateway              "java -Dspring.profi…"   api-gateway        8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+cat-service        cat-service              "java -jar app.jar"      cat-service        8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8082->8080/tcp, [::]:8082->8080/tcp
+grafana            grafana/grafana:latest   "/run.sh"                grafana            8 minutes ago   Up 4 seconds               0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+owner-service      owner-service            "java -jar app.jar"      owner-service      8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+pedigree-service   pedigree-service         "java -jar app.jar"      pedigree-service   8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8083->8080/tcp, [::]:8083->8080/tcp
+postgres           postgres:15              "docker-entrypoint.s…"   postgres           8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+prometheus         prom/prometheus:latest   "/bin/prometheus --c…"   prometheus         8 minutes ago   Up 8 minutes (unhealthy)   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
 
 Проверка эндпоинтов:
 API Gateway:
@@ -74,6 +76,10 @@ curl --location 'http://localhost:8080/api/pedigrees' \
 curl --location 'http://localhost:8080/api/pedigrees/1'
 ![pedigree-get.png](img/pedigree-get.png)
 
+_________________________________________________________
+
+Документация:
+
 Swagger UI и api-docs:
 Owner Service:
 http://localhost:8081/swagger-ui/index.html
@@ -92,3 +98,46 @@ http://localhost:8083/swagger-ui/index.html
 http://localhost:8083/v3/api-docs/pedigree-service
 ![pedigree-swagger.png](img/pedigree-swagger.png)
 ![docs-pedigree.png](img/docs-pedigree.png)
+__________________________________________________________
+
+Мониторинг и метрики:
+
+Система мониторинга включает:
+Prometheus (http://localhost:9090) - сбор метрик
+Grafana (http://localhost:3000) - визуализация (логин: admin/admin)
+
+Prometheus targets доступны здесь: http://localhost:9090/targets
+![prometheus.png](img/prometheus.png)
+
+Основные метрики:
+Общее количество запросов:
+http_server_requests_seconds_count{uri!~"/actuator.*"}
+![total-requests-table.png](img/total-requests-table.png)
+![total-requests-graph.png](img/total-requests-graph.png)
+
+Кастомные метрики:
+Создание кота:
+cat_create_count_total
+![cat_create_table.png](img/cat_create_table.png)
+![cat_create_graph.png](img/cat_create_graph.png)
+Создание владельца:
+owner_create_count_total
+
+Просмотр всех метрик в Prometheus:
+http://localhost:8080/actuator/prometheus
+
+_______________________________________________________________
+
+JMeter:
+Тестировались ендпоинты:
+- Создание владельцев (/api/owners)
+- Создание кошек (/api/cats)
+- Получение информации о владельце (/api/owners/{id})
+
+Тестовые данные находятся в файле:
+[test-data.csv](jmeter/test-data.csv)
+Тест план:
+[cat-club-test.jmx](jmeter/cat-club-test.jmx)
+Результаты:
+![view-result-tree.png](img/view-result-tree.png)
+![summary-report.png](img/summary-report.png)

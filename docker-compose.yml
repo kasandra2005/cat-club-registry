@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Сервис PostgreSQL
   postgres:
@@ -134,8 +136,57 @@ services:
     networks:
       - cat-club-network
 
+  # Prometheus для сбора метрик
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - cat-club-network
+    depends_on:
+      - api-gateway
+      - owner-service
+      - cat-service
+      - pedigree-service
+    healthcheck:
+      test: ["CMD", "wget", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  # Grafana с автоматической настройкой
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_PANELS_DISABLE_SANITIZE_HTML: "true"
+    depends_on:
+      - prometheus
+    networks:
+      - cat-club-network
+
 volumes:
   pg_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   cat-club-network:

@@ -1,6 +1,6 @@
 server:
   port: 8080
-  shutdown: graceful  # Graceful shutdown
+  shutdown: graceful
 
 spring:
   config:
@@ -15,14 +15,17 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
+      metric-registry: micrometer
   jpa:
     hibernate:
       ddl-auto: validate
+      generate-statistics: true
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        session.events.log: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
@@ -37,14 +40,13 @@ spring:
       ignoreDuplicateTables: true
       ignoreChecksums: true
       ignoreFailedPreconditions: true
-  security:
-    user:
-      name: user
-      password: password
-    filter:
-      dispatcher-types: async, request
+  cache:
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+    type: caffeine
+    metrics:
+      enabled: true
 
-# Feign клиенты
 feign:
   client:
     config:
@@ -52,8 +54,11 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
+        metrics:
+          enabled: true
+  metrics:
+    enabled: true
 
-# Настройки Swagger
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -69,15 +74,57 @@ springdoc:
   default-produces-media-type: application/json
   default-consumes-media-type: application/json
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+    jmx:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db,diskSpace
+        liveness:
+          include: ping
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 1m
+        descriptions: true
+    tags:
+      application: ${spring.application.name}
+      region: local
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        feign.client.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.75,0.95,0.99
+        feign.client.requests: 0.5,0.75,0.95,0.99
+      sla:
+        http.server.requests: 100ms,500ms,1s,5s
+
 logging:
   level:
-    org.springframework.boot.actuator: DEBUG
+    org.springframework.boot.actuate: DEBUG
     org.springframework.web: DEBUG
     org.springdoc: INFO
     feign: DEBUG
+    io.micrometer: INFO
+    org.hibernate.stat: DEBUG
+    org.hibernate.SQL: DEBUG
 
 ---
-# Конфигурация для Docker
 spring:
   config:
     activate:
@@ -86,21 +133,44 @@ spring:
     url: jdbc:postgresql://postgres:5432/catclub
     username: postgres
     password: postgres
+  jpa:
+    properties:
+      hibernate:
+        generate-statistics: true
+  cache:
+    metrics:
+      enabled: true
   liquibase:
     user: postgres
     password: postgres
     url: jdbc:postgresql://postgres:5432/catclub
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: "*"
-      base-path: /actuator
-    endpoint:
-      health:
-        show-details: always
+    default-schema: public
+    liquibase-schema: public
+    contexts: cat-service
+    parameters:
+      tablePrefix: cat_
+      ignoreDuplicateTables: true
+      ignoreChecksums: true
+      ignoreFailedPreconditions: true
 
-# Настройки Swagger для Docker
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus  # Только необходимые endpoints
+      base-path: /actuator
+  metrics:
+    export:
+      prometheus:
+        enabled: true  # Обязательно для экспорта в Prometheus
+    tags:
+      application: ${spring.application.name}  # Обязательный тег для фильтрации
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Включает гистограммы для latency
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99  # Ключевые перцентили
+
 springdoc:
   swagger-ui:
     enabled: true

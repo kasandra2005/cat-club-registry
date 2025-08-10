@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- Наследуемся от корневого POM -->
     <parent>
         <groupId>org.catclub</groupId>
         <artifactId>cat-club-registry</artifactId>
@@ -14,15 +13,17 @@
     <name>Owner Service</name>
 
     <properties>
-        <!-- Уже определены в родительском POM -->
+        <!-- Все свойства определены в родительском POM -->
     </properties>
 
     <dependencies>
+        <!-- Общие библиотеки проекта -->
         <dependency>
             <groupId>org.catclub</groupId>
             <artifactId>shared-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,10 +41,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+
+        <!-- Мониторинг и метрики -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
         </dependency>
 
         <!-- База данных -->
@@ -57,14 +67,18 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <!-- Версия теперь управляется через dependencyManagement в корневом POM -->
         </dependency>
 
-        <!-- Liquibase -->
+        <!-- Миграции -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.25.0</version>
+        </dependency>
+
+        <!-- Документация API -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
         <!-- Lombok -->
@@ -94,10 +108,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
     </dependencies>
 

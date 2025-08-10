@@ -5,6 +5,8 @@ spring:
   config:
     activate:
       on-profile: default
+  application:
+    name: owner-service
   datasource:
     url: jdbc:postgresql://postgres:5432/catclub
     username: postgres
@@ -12,26 +14,29 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
+      metric-registry: micrometer
   jpa:
     hibernate:
       ddl-auto: validate
+      generate-statistics: true
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        session.events.log: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
     parameters:
       ignoreDuplicateTables: true
       ignoreChecksums: true
-  security:
-    user:
-      name: user
-      password: password
-    filter:
-      dispatcher-types: async, request
+  cache:
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+    type: caffeine
+    metrics:
+      enabled: true
 
 springdoc:
   swagger-ui:
@@ -39,6 +44,7 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: alpha
     doc-expansion: none
+    display-request-duration: true
   api-docs:
     path: /v3/api-docs
     groups:
@@ -47,11 +53,52 @@ springdoc:
   default-produces-media-type: application/json
   default-consumes-media-type: application/json
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+    jmx:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db,diskSpace
+        liveness:
+          include: ping
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 1m
+        descriptions: true
+    tags:
+      application: ${spring.application.name}
+      region: local
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.75,0.95,0.99
+      sla:
+        http.server.requests: 100ms,500ms,1s,5s
+
 logging:
   level:
     org.springframework.boot.actuate: DEBUG
     org.springframework.web: DEBUG
     org.springdoc: INFO
+    io.micrometer: INFO
+    org.hibernate.stat: DEBUG
+    org.hibernate.SQL: DEBUG
 
 ---
 spring:
@@ -59,19 +106,34 @@ spring:
     activate:
       on-profile: docker
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://postgres:5432/catclub
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        generate-statistics: true
+  cache:
+    metrics:
+      enabled: true
 
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: "*"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus  # Только необходимое
       base-path: /actuator
-    endpoint:
-      health:
-        show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true  # Включение экспорта в Prometheus
+    tags:
+      application: ${spring.application.name}  # Обязательный тег
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Для расчета latency
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99  # Ключевые перцентили
 
 springdoc:
   swagger-ui:

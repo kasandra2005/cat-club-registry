@@ -15,16 +15,31 @@ spring:
           uri: http://owner-service:8080
           predicates:
             - Path=/api/owners/**
+          metadata:
+            metrics:
+              name: owner.route
+              tags:
+                service: owner
 
         - id: cat-service
           uri: http://cat-service:8080
           predicates:
             - Path=/api/cats/**
+          metadata:
+            metrics:
+              name: cat.route
+              tags:
+                service: cat
 
         - id: pedigree-service
           uri: http://pedigree-service:8080
           predicates:
             - Path=/api/pedigrees/**
+          metadata:
+            metrics:
+              name: pedigree.route
+              tags:
+                service: pedigree
 
         # Swagger UI (перенаправляем на owner-service)
         - id: swagger-ui
@@ -33,12 +48,22 @@ spring:
             - Path=/swagger-ui.html
           filters:
             - RewritePath=/swagger-ui.html, /swagger-ui/index.html
+          metadata:
+            metrics:
+              name: swagger.ui.route
+              tags:
+                type: documentation
 
         # Swagger ресурсы (для корректной работы UI)
         - id: swagger-resources
           uri: http://owner-service:8080
           predicates:
             - Path=/swagger-resources/**
+          metadata:
+            metrics:
+              name: swagger.resources.route
+              tags:
+                type: documentation
 
         # API документация сервисов
         - id: owner-api-docs
@@ -47,6 +72,11 @@ spring:
             - Path=/owner-api/v3/api-docs
           filters:
             - RewritePath=/owner-api/v3/api-docs, /v3/api-docs
+          metadata:
+            metrics:
+              name: owner.api.docs.route
+              tags:
+                type: documentation
 
         - id: cat-api-docs
           uri: http://cat-service:8080
@@ -54,6 +84,11 @@ spring:
             - Path=/cat-api/v3/api-docs
           filters:
             - RewritePath=/cat-api/v3/api-docs, /v3/api-docs
+          metadata:
+            metrics:
+              name: cat.api.docs.route
+              tags:
+                type: documentation
 
         - id: pedigree-api-docs
           uri: http://pedigree-service:8080
@@ -61,22 +96,51 @@ spring:
             - Path=/pedigree-api/v3/api-docs
           filters:
             - RewritePath=/pedigree-api/v3/api-docs, /v3/api-docs
+          metadata:
+            metrics:
+              name: pedigree.api.docs.route
+              tags:
+                type: documentation
+
+      metrics:
+        enabled: true
+        tags:
+          route:
+            enabled: true
+          uri:
+            enabled: true
+          status:
+            enabled: true
+          outcome:
+            enabled: true
+          exception:
+            enabled: true
+          http:
+            method:
+              enabled: true
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health, prometheus  # Только необходимое
       base-path: /actuator
-  endpoint:
-    health:
-      show-details: always
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}  # Обязательный тег
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Для гистограмм latency
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99  # Ключевые перцентили
+
 
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web: TRACE
+    io.micrometer: INFO
+    org.springframework.boot.actuate.metrics: DEBUG

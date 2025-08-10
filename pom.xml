@@ -15,11 +15,6 @@
         <module>cat-service</module>
         <module>pedigree-service</module>
         <module>api-gateway</module>
-        <!-- Будущие модули
-
-        <module>api-gateway</module>
-        <module>service-discovery</module>
-        <module>pedigree-service</module> -->
     </modules>
 
     <properties>
@@ -29,13 +24,14 @@
         <lombok.version>1.18.30</lombok.version>
         <testcontainers.version>1.19.3</testcontainers.version>
         <caffeine.version>3.1.8</caffeine.version>
+        <micrometer.version>1.12.0</micrometer.version> <!-- Добавлено новое свойство -->
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version> <!-- Явно указываем версию -->
-        <relativePath/> <!-- Пусть Maven проверит локальный репозиторий -->
+        <version>3.2.0</version>
+        <relativePath/>
     </parent>
 
     <dependencyManagement>
@@ -48,11 +44,29 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <!-- SpringDoc OpenAPI -->
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>2.3.0</version>
+            </dependency>
+
+            <!-- Мониторинг и метрики -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-observation</artifactId>
+                <version>${micrometer.version}</version>
             </dependency>
 
             <!-- Базы данных -->
@@ -91,7 +105,6 @@
                 <version>5.0.0</version>
             </dependency>
 
-
             <!-- Миграции -->
             <dependency>
                 <groupId>org.liquibase</groupId>
@@ -120,6 +133,12 @@
                 <version>3.2.0</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.9.19</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
