@@ -40,7 +40,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -69,6 +69,7 @@ services:
       SPRING_LIQUIBASE_CONTEXTS: "cat-service"
       SPRING_LIQUIBASE_DEFAULT_SCHEMA: public
       SPRING_LIQUIBASE_LIQUIBASE_SCHEMA: public
+      JAVA_TOOL_OPTIONS: "-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:+ExitOnOutOfMemoryError"
     depends_on:
       postgres:
         condition: service_healthy
@@ -98,6 +99,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_LIQUIBASE_ENABLED: "true"
+      JAVA_TOOL_OPTIONS: "-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:+ExitOnOutOfMemoryError"
     depends_on:
       postgres:
         condition: service_healthy
@@ -120,6 +122,8 @@ services:
     image: api-gateway
     ports:
       - "8080:8080"
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:+ExitOnOutOfMemoryError"
     depends_on:
       owner-service:
         condition: service_healthy

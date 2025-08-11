@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY target/owner-service-*.jar app.jar
 COPY src/main/resources/db/changelog /app/db/changelog

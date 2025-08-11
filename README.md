@@ -143,8 +143,32 @@ JMeter:
 ![summary-report.png](img/summary-report.png)
 _________________________________________________________________
 
+Анализ в MemoryAnalyzer (MAT):
+Heap dump создан под нагрузкой командой:
+docker exec owner-service jcmd 1 GC.heap_dump /tmp/heap_under_load.hprof
+
+В результате:
+Leak Suspects:
+![leak-suspects.png](img/leak-suspects.png)
+![leak-suspects-2.png](img/leak-suspects-2.png)
+
+Dominator Tree:
+![dominator-tree.png](img/dominator-tree.png)
+
+Histogram:
+![histogram.png](img/histogram.png)
+
+Анализ памяти:
+- Общий размер кучи: 74.3 MB
+- Ключевые объекты:
+    - Spring прокси: 37KB (малозначимо)
+    - Кэши: ~12% памяти
+- Неограниченный кэш Caffeine (риск утечки)
+- 14 прокси-методов OwnerController
 
 
+
+__________________________________________________________________
 Возникшие проблемы:
 Попытка отображения метрик в grafana:
 API Latency (95th & 99th percentiles), API Request Rate, API Error Rate (%), System Resources,

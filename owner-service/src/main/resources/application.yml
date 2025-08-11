@@ -74,6 +74,10 @@ management:
       enabled: true
     prometheus:
       enabled: true
+    endpoint:
+      heapdump:
+        enabled: true
+        sensitive: false
   metrics:
     export:
       prometheus:
