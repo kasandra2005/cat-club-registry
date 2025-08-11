@@ -141,3 +141,18 @@ JMeter:
 Результаты:
 ![view-result-tree.png](img/view-result-tree.png)
 ![summary-report.png](img/summary-report.png)
+_________________________________________________________________
+
+
+
+Возникшие проблемы:
+Попытка отображения метрик в grafana:
+API Latency (95th & 99th percentiles), API Request Rate, API Error Rate (%), System Resources,
+Feign Client Calls и Business Metrics
+Сам dashboard в grafana виден:
+![dashboard.png](img/dashboard.png)
+Он лежит в приложении:
+[cat-club-main.json](monitoring/grafana/dashboards/cat-club-main.json)
+Но детальная информация видна только по System Resources и Business Metrics
+По остальным "No data":
+![dashboard-details.png](img/dashboard-details.png)
