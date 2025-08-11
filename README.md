@@ -165,6 +165,23 @@ Histogram:
     - Кэши: ~12% памяти
 - Неограниченный кэш Caffeine (риск утечки)
 - 14 прокси-методов OwnerController
+__________________________________________________________________
+VisualVM:
+Добавлен JMX для мониторинга через VisualVM для owner-service
+Через GUI VisualVM добавила JMX Connection:
+service:jmx:rmi:///jndi/rmi://localhost:7093/jmxrmi
+Запустила минимальную нагрузку через jmeter (тест план прикреплен к проекту)
+Скриншоты:
+Overview:
+![visualvm-overwiew.png](img/visualvm-overwiew.png)
+Monitor:
+![visualvm-monitor.png](img/visualvm-monitor.png)
+Threads:
+![visualvm-threds.png](img/visualvm-threds.png)
+Sampler:
+![visualvl-sampler.png](img/visualvl-sampler.png)
+
+
 
 
 

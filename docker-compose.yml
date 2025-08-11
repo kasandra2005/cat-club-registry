@@ -30,12 +30,14 @@ services:
     image: owner-service
     ports:
       - "8081:8080"
+      - "7093:7093"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/catclub
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_LIQUIBASE_ENABLED: "true"
+      JAVA_TOOL_OPTIONS: -Xmx256m -Xms128m
     depends_on:
       postgres:
         condition: service_healthy

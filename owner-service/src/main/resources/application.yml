@@ -71,13 +71,17 @@ management:
         liveness:
           include: ping
     metrics:
-      enabled: true
+      export:
+        jmx:
+          enabled: true
     prometheus:
       enabled: true
     endpoint:
       heapdump:
         enabled: true
         sensitive: false
+    jmx:
+      enabled: true
   metrics:
     export:
       prometheus:
