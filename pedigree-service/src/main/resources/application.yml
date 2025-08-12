@@ -162,19 +162,19 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus  # Только необходимые endpoints
+        include: health, prometheus
       base-path: /actuator
   metrics:
     export:
       prometheus:
-        enabled: true  # Обязательно для интеграции с Prometheus
+        enabled: true
     tags:
-      application: ${spring.application.name}  # Ключевой тег для фильтрации
+      application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        http.server.requests: true  # Активирует buckets для гистограмм
+        http.server.requests: true
       percentiles:
-        http.server.requests: 0.5,0.95,0.99  # Основные перцентили
+        http.server.requests: 0.5,0.95,0.99
 
 springdoc:
   swagger-ui:

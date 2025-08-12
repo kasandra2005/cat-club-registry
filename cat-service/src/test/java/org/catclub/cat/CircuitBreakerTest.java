@@ -17,10 +17,8 @@ import org.catclub.shared.dto.OwnerResponse;
 import org.catclub.cat.model.Cat;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,11 +44,9 @@ public class CircuitBreakerTest {
 
     @BeforeEach
     void setup() {
-        // Reset circuit breaker
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("ownerServiceClient");
         circuitBreaker.reset();
 
-        // Setup test cat
         Cat testCat = new Cat();
         testCat.setId(1L);
         testCat.setName("Test Cat");
@@ -62,16 +58,13 @@ public class CircuitBreakerTest {
 
     @Test
     public void whenServiceFails_thenCircuitBreakerOpens() throws Exception {
-        // Mock service to throw exception
         when(ownerServiceClient.getOwner(anyLong()))
                 .thenThrow(new RuntimeException("Service unavailable"));
 
-        // Make calls - first should fail and trigger fallback
         mockMvc.perform(get("/api/cats/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Fallback Cat"));
 
-        // Verify circuit breaker metrics
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("ownerServiceClient");
         assertThat(circuitBreaker.getMetrics().getNumberOfFailedCalls()).isEqualTo(1);
     }
@@ -79,7 +72,6 @@ public class CircuitBreakerTest {
 
     @Test
     public void whenServiceWorks_thenReturnsNormalResponse() throws Exception {
-        // Mock successful response
         OwnerResponse successResponse = OwnerResponse.builder()
                 .id(1L)
                 .name("Test Owner")

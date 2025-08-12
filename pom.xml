@@ -24,7 +24,7 @@
         <lombok.version>1.18.30</lombok.version>
         <testcontainers.version>1.19.3</testcontainers.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <micrometer.version>1.12.0</micrometer.version> <!-- Добавлено новое свойство -->
+        <micrometer.version>1.12.0</micrometer.version>
         <springdoc.version>2.3.0</springdoc.version>
         <resilience4j.version>2.1.0</resilience4j.version>
         <spring-cloud-circuitbreaker.version>3.1.0</spring-cloud-circuitbreaker.version>
@@ -39,7 +39,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -48,14 +47,12 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- SpringDoc OpenAPI -->
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
 
-            <!-- Мониторинг и метрики -->
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
@@ -72,7 +69,6 @@
                 <version>${micrometer.version}</version>
             </dependency>
 
-            <!-- Базы данных -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
@@ -85,7 +81,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Утилиты -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -108,14 +103,12 @@
                 <version>5.0.0</version>
             </dependency>
 
-            <!-- Миграции -->
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>4.25.0</version>
             </dependency>
 
-            <!-- Тестирование -->
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>

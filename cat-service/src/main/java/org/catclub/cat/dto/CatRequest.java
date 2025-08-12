@@ -47,8 +47,4 @@ public class CatRequest {
     @Length(max = 500, message = "Description must not exceed 500 characters")
     private String description;
 
-    // Дополнительные методы
-    public boolean hasParents() {
-        return motherId != null && motherId > 0 && fatherId != null && fatherId > 0;
-    }
 }

@@ -129,19 +129,19 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus  # Только необходимое
+        include: health, prometheus
       base-path: /actuator
   metrics:
     export:
       prometheus:
-        enabled: true  # Включение экспорта в Prometheus
+        enabled: true
     tags:
-      application: ${spring.application.name}  # Обязательный тег
+      application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        http.server.requests: true  # Для расчета latency
+        http.server.requests: true
       percentiles:
-        http.server.requests: 0.5,0.95,0.99  # Ключевые перцентили
+        http.server.requests: 0.5,0.95,0.99
 
 springdoc:
   swagger-ui:

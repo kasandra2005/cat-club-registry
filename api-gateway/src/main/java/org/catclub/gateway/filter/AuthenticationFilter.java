@@ -14,12 +14,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            // Логика проверки аутентификации
             return chain.filter(exchange);
         };
     }
 
     public static class Config {
-        // Конфигурационные параметры фильтра
     }
 }

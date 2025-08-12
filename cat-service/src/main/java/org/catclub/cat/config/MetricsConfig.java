@@ -9,19 +9,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MetricsConfig {
 
-    /**
-     * Минимальная конфигурация метрик
-     */
     @Bean
     public MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
         return registry -> registry.config()
                 .commonTags("application", "cat-service");
     }
 
-    /**
-     * Опционально: включаем поддержку @Timed,
-     * если нужно замерять отдельные методы
-     */
     @Bean
     public TimedAspect timedAspect(MeterRegistry registry) {
         return new TimedAspect(registry);

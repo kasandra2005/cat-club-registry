@@ -10,8 +10,4 @@ import java.util.Optional;
 @Repository
 public interface PedigreeRepository extends JpaRepository<Pedigree, Long> {
     Optional<Pedigree> findByCatId(Long catId);
-    Optional<Pedigree> findByRegistrationNumber(String registrationNumber);
-
-    @Query("SELECT p FROM Pedigree p WHERE p.motherPedigreeId = :pedigreeId OR p.fatherPedigreeId = :pedigreeId")
-    Optional<Pedigree> findChildrenByPedigreeId(Long pedigreeId);
 }

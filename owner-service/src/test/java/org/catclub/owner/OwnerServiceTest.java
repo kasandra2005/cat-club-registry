@@ -38,33 +38,27 @@ class OwnerServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        // Ждем пока БД будет готова
         postgres.start();
     }
 
     @Test
     void shouldCreateAndRetrieveOwner() {
-        // Подготовка тестовых данных
         OwnerRequest request = new OwnerRequest(
                 "Test Owner",
                 "test@example.com",
                 "+1234567890"
         );
 
-        // Вызов тестируемого метода
         OwnerResponse createdResponse = ownerService.createOwner(request);
 
-        // Проверка создания
         assertThat(createdResponse.getId()).isNotNull();
         assertThat(createdResponse.getName()).isEqualTo("Test Owner");
         assertThat(createdResponse.getEmail()).isEqualTo("test@example.com");
         assertThat(createdResponse.getPhone()).isEqualTo("+1234567890");
         assertThat(createdResponse.getRegistrationDate()).isNotNull();
 
-        // Получение созданного владельца
         OwnerResponse retrievedResponse = ownerService.getOwner(createdResponse.getId());
 
-        // Проверки
         assertThat(retrievedResponse.getId()).isEqualTo(createdResponse.getId());
         assertThat(retrievedResponse.getName()).isEqualTo("Test Owner");
         assertThat(retrievedResponse.getEmail()).isEqualTo("test@example.com");

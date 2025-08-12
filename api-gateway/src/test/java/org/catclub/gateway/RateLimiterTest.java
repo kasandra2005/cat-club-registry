@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -50,7 +49,7 @@ public class RateLimiterTest {
     private WebTestClient webTestClient;
 
     @Autowired
-    private WireMockServer wireMockServer; // Добавлено для доступа к WireMockServer
+    private WireMockServer wireMockServer;
 
     @BeforeAll
     static void beforeAll() {
@@ -60,7 +59,6 @@ public class RateLimiterTest {
 
     @BeforeEach
     void setup() {
-        // Настраиваем WireMock для ответа на запрос
         stubFor(get(urlEqualTo("/api/owners"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -76,17 +74,13 @@ public class RateLimiterTest {
 
     @AfterEach
     void verifyRequests() {
-        // Проверяем, что запросы дошли до WireMock
         verify(getRequestedFor(urlEqualTo("/api/owners")));
     }
 
     @Test
     void testRateLimiter_blocksRequestsOverLimit() throws Exception {
-        // Диагностика: проверьте доступность Redis
         System.out.println("Redis host: " + redis.getHost());
         System.out.println("Redis port: " + redis.getFirstMappedPort());
-
-        // Диагностика: проверьте URL WireMock
         System.out.println("WireMock port: " + wireMockServer.port()); // Теперь работает
 
         // 1. Первый запрос должен пройти
@@ -108,7 +102,7 @@ public class RateLimiterTest {
 
         // 3. Ждем восстановления rate limit
         try {
-            Thread.sleep(1100); // Чуть больше 1 секунды
+            Thread.sleep(1100);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

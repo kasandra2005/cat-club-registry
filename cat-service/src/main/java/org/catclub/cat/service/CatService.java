@@ -55,7 +55,6 @@ public class CatService {
         }
     }
 
-    // Fallback метод для Circuit Breaker
     private CatResponse getCatFallback(Long id, Exception ex) {
         log.warn("Fallback triggered for cat id: {}, error: {}", id, ex.getMessage());
         return CatResponse.builder()

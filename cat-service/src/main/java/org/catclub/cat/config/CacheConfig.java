@@ -38,6 +38,6 @@ public class CacheConfig implements CachingConfigurer {
 
     @Override
     public CacheManager cacheManager() {
-        return catCacheManager(); // Указываем основной CacheManager
+        return catCacheManager();
     }
 }

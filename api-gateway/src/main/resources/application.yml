@@ -23,7 +23,6 @@ spring:
         locator:
           enabled: false
       routes:
-        # Основные сервисы
         - id: owner-service
           uri: http://owner-service:8080
           predicates:
@@ -61,7 +60,6 @@ spring:
               tags:
                 service: pedigree
 
-        # Swagger UI (перенаправляем на owner-service)
         - id: swagger-ui
           uri: http://owner-service:8080
           predicates:
@@ -74,7 +72,6 @@ spring:
               tags:
                 type: documentation
 
-        # Swagger ресурсы (для корректной работы UI)
         - id: swagger-resources
           uri: http://owner-service:8080
           predicates:
@@ -85,7 +82,6 @@ spring:
               tags:
                 type: documentation
 
-        # API документация сервисов
         - id: owner-api-docs
           uri: http://owner-service:8080
           predicates:
@@ -149,16 +145,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus  # Только необходимое
+        include: health, prometheus
       base-path: /actuator
   metrics:
     tags:
-      application: ${spring.application.name}  # Обязательный тег
+      application: ${spring.application.name}
     distribution:
       percentiles-histogram:
-        http.server.requests: true  # Для гистограмм latency
+        http.server.requests: true
       percentiles:
-        http.server.requests: 0.5,0.95,0.99  # Ключевые перцентили
+        http.server.requests: 0.5,0.95,0.99
   endpoint:
     gateway:
       enabled: true
@@ -166,7 +162,6 @@ management:
     metrics:
       export:
         enabled: true
-
 
 logging:
   level:
