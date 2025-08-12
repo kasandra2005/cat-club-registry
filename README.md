@@ -180,10 +180,41 @@ Threads:
 ![visualvm-threds.png](img/visualvm-threds.png)
 Sampler:
 ![visualvl-sampler.png](img/visualvl-sampler.png)
+__________________________________________________________________
+Rate Limiter и Circuit Breaker
+Реализация Rate Limiter в API Gateway:
 
+Ограничение количества запросов:
+- Базовый лимит: 10 запросов в секунду
+- Burst-емкость: 20 запросов (максимальный всплеск)
 
+Техническая реализация:
+- Добавлен сервис Redis в docker-compose.yml
+- Настроено подключение в application.yml API Gateway
 
+Реализован RequestRateLimiter
+KeyResolver определяет клиента по IP-адресу (с fallback на "test-key" для тестов)
 
+Поведение при превышении лимита:
+- Возвращается HTTP 429 Too Many Requests
+
+Тестирование:
+- Написаны интеграционные тесты с использованием Testcontainers и WireMock 
+[RateLimiterTest.java](api-gateway/src/test/java/org/catclub/gateway/RateLimiterTest.java)
+- Для тестов используется конфигурация в application-test.yml
+[application-test.yaml](api-gateway/src/test/resources/application-test.yaml)
+
+Реализация Circuit Breaker в Cat Service:
+Защита от сбоев при вызовах OwnerService
+Реализация через:
+- Feign Client с Circuit Breaker
+- Двухуровневый fallback механизм (Feign + Service level)
+
+Тестирование:
+- Написаны интеграционные тесты с использованием Testcontainers и WireMock
+[CircuitBreakerTest.java](cat-service/src/test/java/org/catclub/cat/CircuitBreakerTest.java)
+- Для тестов используется конфигурация в application-test.yml
+[application-test.yml](cat-service/src/test/resources/application-test.yml)
 
 __________________________________________________________________
 Возникшие проблемы:

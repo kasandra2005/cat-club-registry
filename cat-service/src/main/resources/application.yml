@@ -46,13 +46,40 @@ spring:
     type: caffeine
     metrics:
       enabled: true
+  main:
+    allow-bean-definition-overriding: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ownerServiceClient:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
+  timelimiter:
+    instances:
+      ownerServiceClient:
+        timeoutDuration: 2s
 
 feign:
+  circuitbreaker:
+    enabled: true
   client:
     config:
       default:
-        connectTimeout: 5000
-        readTimeout: 5000
+        connectTimeout: 2000
+        readTimeout: 2000
         loggerLevel: basic
         metrics:
           enabled: true
