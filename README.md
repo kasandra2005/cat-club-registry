@@ -1,3 +1,32 @@
+Cat Club Registry - Система регистрации породистых кошек
+
+Описание проекта:
+Cat Club Registry - это микросервисное приложение для учета владельцев породистых кошек и их питомцев. Система позволяет:
+- Регистрировать владельцев кошек с контактными данными
+- Добавлять информацию о кошках (кличка, порода, окраси т.д.)
+- Управлять присвоением родословных кошкам
+
+Архитектура:
+- API Gateway - единая точка входа для всех запросов
+- Owner Service - управление владельцами кошек
+- Cat Service - управление информацией о кошках
+- Pedigree Service - управление родословными
+- Shared-lib - библиотека для общего использования
+
+Технологический стек:
+- Java 21
+- Spring Boot
+- Spring Cloud
+- PostgreSQL
+- Redis
+- Liquibase
+- Docker
+- Kubernetes (Helm) (с развертыванием возникли проблемы, поэтому в последнем блоке о возникших проблемах указано,
+что именно было сделано, но в проект не закоммитила нерабочий вариант)
+- Prometheus + Grafana (в Grafana с отображением данных на дашбордах так же возникли проблемы, 
+- это также указано в последнем блоке о возникших проблемах данного файла)
+- OpenAPI 3.0
+___________________________________________________________________________
 Запуск:
 # В корне проекта (с pom.xml)
 mvn clean package
@@ -21,8 +50,9 @@ owner-service      owner-service            "java -jar app.jar"      owner-servi
 pedigree-service   pedigree-service         "java -jar app.jar"      pedigree-service   8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8083->8080/tcp, [::]:8083->8080/tcp
 postgres           postgres:15              "docker-entrypoint.s…"   postgres           8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
 prometheus         prom/prometheus:latest   "/bin/prometheus --c…"   prometheus         8 minutes ago   Up 8 minutes (unhealthy)   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
-
+_____________________________________________________________________________________________
 Проверка эндпоинтов:
+
 API Gateway:
 ![api-gateway-up.png](img/api-gateway-up.png)
 Owner Service:
@@ -125,7 +155,6 @@ owner_create_count_total
 
 Просмотр всех метрик в Prometheus:
 http://localhost:8080/actuator/prometheus
-
 _______________________________________________________________
 
 JMeter:
@@ -215,7 +244,6 @@ KeyResolver определяет клиента по IP-адресу (с fallbac
 [CircuitBreakerTest.java](cat-service/src/test/java/org/catclub/cat/CircuitBreakerTest.java)
 - Для тестов используется конфигурация в application-test.yml
 [application-test.yml](cat-service/src/test/resources/application-test.yml)
-
 __________________________________________________________________
 Возникшие проблемы:
 Попытка отображения метрик в grafana:
