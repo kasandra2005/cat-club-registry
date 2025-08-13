@@ -246,7 +246,7 @@ KeyResolver определяет клиента по IP-адресу (с fallbac
 [application-test.yml](cat-service/src/test/resources/application-test.yml)
 __________________________________________________________________
 Возникшие проблемы:
-Попытка отображения метрик в grafana:
+- Попытка отображения метрик в grafana:
 API Latency (95th & 99th percentiles), API Request Rate, API Error Rate (%), System Resources,
 Feign Client Calls и Business Metrics
 Сам dashboard в grafana виден:
@@ -256,3 +256,12 @@ Feign Client Calls и Business Metrics
 Но детальная информация видна только по System Resources и Business Metrics
 По остальным "No data":
 ![dashboard-details.png](img/dashboard-details.png)
+
+- Попытка запуска приложения в kubernetes с использованием helm, kind, kubectl
+Была создана директория helm c необходимыми директориями и файлами:
+![helm.png](img/helm.png)
+Также были созданы файлы kind-config и values в основной директории проекта:
+![king-config.png](img/king-config.png)
+![values.png](img/values.png)
+Возникли проблемы с развертыванием из-за зависимости сервисов, часть сервисов не работали корректно, 
+после решения проблем с ними возникали проблемы с другими. 
