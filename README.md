@@ -43,22 +43,32 @@ docker-compose ps
 ➜  cat-club-registry git:(main) ✗ docker-compose ps
 
 NAME               IMAGE                    COMMAND                  SERVICE            CREATED         STATUS                     PORTS
+
 api-gateway        api-gateway              "java -Dspring.profi…"   api-gateway        8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+
 cat-service        cat-service              "java -jar app.jar"      cat-service        8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8082->8080/tcp, [::]:8082->8080/tcp
+
 grafana            grafana/grafana:latest   "/run.sh"                grafana            8 minutes ago   Up 4 seconds               0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+
 owner-service      owner-service            "java -jar app.jar"      owner-service      8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+
 pedigree-service   pedigree-service         "java -jar app.jar"      pedigree-service   8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:8083->8080/tcp, [::]:8083->8080/tcp
+
 postgres           postgres:15              "docker-entrypoint.s…"   postgres           8 minutes ago   Up 8 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+
 prometheus         prom/prometheus:latest   "/bin/prometheus --c…"   prometheus         8 minutes ago   Up 8 minutes (unhealthy)   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
 _____________________________________________________________________________________________
 Проверка эндпоинтов:
 
 API Gateway:
 ![api-gateway-up.png](img/api-gateway-up.png)
+
 Owner Service:
 ![owner-service-up.png](img/owner-service-up.png)
+
 Cat Service:
 ![cat-service-up.png](img/cat-service-up.png)
+
 Pedigree Service:
 ![pedigree-service-up.png](img/pedigree-service-up.png)
 
@@ -259,9 +269,14 @@ Feign Client Calls и Business Metrics
 
 - Попытка запуска приложения в kubernetes с использованием helm, kind, kubectl
 Была создана директория helm c необходимыми директориями и файлами:
+- 
 ![helm.png](img/helm.png)
+
 Также были созданы файлы kind-config и values в основной директории проекта:
+
 ![king-config.png](img/king-config.png)
+
 ![values.png](img/values.png)
+
 Возникли проблемы с развертыванием из-за зависимости сервисов, часть сервисов не работали корректно, 
 после решения проблем с ними возникали проблемы с другими. 
